@@ -1,15 +1,29 @@
 program main
+
   implicit none
 
+  integer :: i
 
 
+  !----------------------------------------------------------------------------------------!
+  ! test standard normal distribution
 
+  open(1,file='rn_standard_normal_distribution.txt')
 
+  do i = 1, 100000
+
+    write(1,*)  rn_std_normal_dist()
+
+  end do
+
+  close(1)
 
 Contains
-  Subroutine GetSigma (a,b)
+
+  real(kind=8) function rn_std_normal_dist()
     IMPLICIT NONE
     integer :: i
+    ! real (kind=8), intent(out) :: rn
     real(kind=8) :: half = 0.5
     real :: s = 0.449871, t = -0.386595, a = 0.19600, b = 0.25472, &
     r1 = 0.27597, r2 = 0.27846, u, v, x, y, q
@@ -34,7 +48,6 @@ Contains
 
     rn_std_normal_dist = v/u
 
-  end function rn_std_normal_dist
-END Subroutine GetSigma
+  END function rn_std_normal_dist
 
 end program main

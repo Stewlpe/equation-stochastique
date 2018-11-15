@@ -1,5 +1,5 @@
 set terminal png
-set output "Erreur.png"
+set output "output/Erreur.png"
 
 set xlabel "Itérations en temps"
 set ylabel "Erreur absolue"

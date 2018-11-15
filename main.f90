@@ -7,7 +7,7 @@ program main
   open(11, file="res.txt", status="unknown")
   open(12, file="Tint.txt", status="unknown")
 
-  Np = 300
+  Np = 500000
 
   dt = 0.01
   tau = 5.
@@ -19,7 +19,7 @@ program main
   allocate(E(1:Np)) ! Tirer au sort Np énergies
   allocate(Ep(1:Np))
 
-    E(1) = rand(2) ! Seed
+  E(1) = rand(2) ! Seed
   do i = 1, Np
     E(i) = (rand()*100000)+100000
   enddo
@@ -32,7 +32,7 @@ program main
   do while (it < 1000)! .or. (erreur > 1))
     Ep = E
     call Iteration(E, tau, dt, T, R) ! Calcule E^{n+1}
-    erreur = abs(sum(Ep-E))
+    erreur = sum(abs(Ep-E))
     write(11,*) erreur
 
     Tint = sum(E)/Np/R
@@ -65,37 +65,32 @@ contains
 
 
 
-real(kind=8) function rn_std_normal_dist()
-  IMPLICIT NONE
-  ! real (kind=8), intent(out) :: rn
-  real(kind=8) :: half = 0.5
-  real(kind=8) :: s = 0.449871, t = -0.386595, a = 0.19600, b = 0.25472, &
-  r1 = 0.27597, r2 = 0.27846, u, v, x, y, q
+  real(kind=8) function rn_std_normal_dist()
+    IMPLICIT NONE
+    ! real (kind=8), intent(out) :: rn
+    real(kind=8) :: half = 0.5
+    real(kind=8) :: s = 0.449871, t = -0.386595, a = 0.19600, b = 0.25472, &
+    r1 = 0.27597, r2 = 0.27846, u, v, x, y, q
 
-  do
+    do
 
-    call random_number(u)
-    call random_number(v)
-    v = 1.7156 * (v - half)
+      call random_number(u)
+      call random_number(v)
+      v = 1.7156 * (v - half)
 
-    x = u - s
-    y = ABS(v) - t
-    q = x**2 + y*(a*y - b*x)
+      x = u - s
+      y = ABS(v) - t
+      q = x**2 + y*(a*y - b*x)
 
-    if (q < r1) exit
+      if (q < r1) exit
 
-    if (q > r2) cycle
+      if (q > r2) cycle
 
-    if (v**2 < -4.0*log(u)*u**2) exit
+      if (v**2 < -4.0*log(u)*u**2) exit
 
-  end do
+    end do
 
-  rn_std_normal_dist = v/u
+    rn_std_normal_dist = v/u
 
-END function rn_std_normal_dist
-
-
-
-
-
+  END function rn_std_normal_dist
 end program main

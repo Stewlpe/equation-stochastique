@@ -1,5 +1,5 @@
 set terminal png
-set output "Tint.png"
+set output "output/Tint.png"
 
 set xlabel "Itérations en temps"
 set ylabel "Température intérieure"

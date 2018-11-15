@@ -1,35 +1,37 @@
 program main
   implicit none
-  real, dimension(:), allocatable :: E, Ep
+  real(kind=8), dimension(:), allocatable :: E, Ep
   integer :: Np, it, i
-  real :: dt, tau, sigma, T, R, moyenneT, Tint, erreur
+  real(kind=8) :: dt, tau, T, R, Tint, erreur
 
   open(11, file="res.txt", status="unknown")
   open(12, file="Tint.txt", status="unknown")
 
-  Np = 500
+  Np = 300
 
   dt = 0.01
-  tau = 5
-  T = 300
-  R = 280
+  tau = 5.
+  T = 300.
+  R = 280.
 
-  sigma = rand(2) ! Seed
 
-  allocate(E(Np)) ! Tirer au sort Np énergies
-  do i = 0, Np-1
+
+  allocate(E(1:Np)) ! Tirer au sort Np énergies
+  allocate(Ep(1:Np))
+
+    E(1) = rand(2) ! Seed
+  do i = 1, Np
     E(i) = (rand()*100000)+100000
   enddo
 
-  Tint = sum(E)/Np/R
+  Tint = sum(E)/Np/R ! Moyenne de l'énergie / R
 
   it = 0
   erreur = 10
 
-  do while ((it < 10) .or. (erreur < 1))
+  do while (it < 1000)! .or. (erreur > 1))
     Ep = E
-    sigma = rn_std_normal_dist()
-    call Iteration(E, tau, sigma, dt, T, R) ! Calcule E^{n+1}
+    call Iteration(E, tau, dt, T, R) ! Calcule E^{n+1}
     erreur = abs(sum(Ep-E))
     write(11,*) erreur
 
@@ -45,15 +47,19 @@ program main
   close(11)
   close(12)
 
+
+
 contains
-  subroutine Iteration(E, tau, sigma, dt, T, R)
+  subroutine Iteration(E, tau, dt, T, R)
     implicit none
-    real, intent(in) :: dt, tau, sigma, T, R
-    real, dimension(:), intent(out) :: E
+    real(kind=8), intent(in) :: dt, tau, T, R
+    real(kind=8), dimension(:), intent(inout) :: E
+    real(kind=8) :: sigma
 
-    E=1./(1+2*dt/tau)*(E+R*T*dt/tau*(1+sigma**2)+2*sqrt(dt/tau*R*T*E)*sigma)
-    ! write(11,*) E(1)
-
+    do i = 1, Np
+      sigma = rn_std_normal_dist()
+      E(i)=1./(1+2*dt/tau)*(E(i)+R*T*dt/tau*(1+sigma**2)+2*sqrt(dt/tau*R*T*E(i))*sigma)
+    enddo
   end subroutine Iteration
 
 
@@ -61,10 +67,9 @@ contains
 
 real(kind=8) function rn_std_normal_dist()
   IMPLICIT NONE
-  integer :: i
   ! real (kind=8), intent(out) :: rn
   real(kind=8) :: half = 0.5
-  real :: s = 0.449871, t = -0.386595, a = 0.19600, b = 0.25472, &
+  real(kind=8) :: s = 0.449871, t = -0.386595, a = 0.19600, b = 0.25472, &
   r1 = 0.27597, r2 = 0.27846, u, v, x, y, q
 
   do

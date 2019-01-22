@@ -55,10 +55,12 @@ contains
     real(kind=8), intent(in) :: dt, tau, T, R
     real(kind=8), dimension(:), intent(inout) :: E
     real(kind=8) :: sigma
+    real(kind=8) :: A
+    A = 1./(1+2*dt/tau)
 
     do i = 1, Np
       sigma = rn_std_normal_dist()
-      E(i)=1./(1+2*dt/tau)*(E(i)+R*T*dt/tau*(1+sigma**2)+2*sqrt(dt/tau*R*T*E(i))*sigma)
+      E(i)=A*(E(i)+R*T*dt/tau*(1+sigma**2)+2*sqrt(dt/tau*R*T*E(i))*sigma)
     enddo
   end subroutine Iteration
 
